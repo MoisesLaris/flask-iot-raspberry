@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" href="../static/bootstrap.min.css">
+		<script src="../static/jquery.min.js"></script>
+		<script src="../static/plotly-latest.min.js"></script>
+	</head>
+	<body>
+		<div class="container">
+		
+		<a href="/" class="btn btn-primary m-5">Servomotor</a>	
+			
+			<div class="card text-center">
+				<div class="card-header">
+					<h1>Histogramas</h1>
+				</div>
+				<div class="card-body">
+					<div class="row">
+						<div class="col-md-6 col-sm-6">
+						<h3>Temperatura: <span id="t"></span></h3>
+						<div id="temp"></div>
+						</div>
+						<div class="col-md-6 col-sm-6">
+						<h3>Humedad: <span id="h"></span></h3>
+						<div id="hum"></div>
+						</div>
+					</div>
+					
+				</div>
+			</div>
+		</div>
+		<script>
+ 			var temperatura = [];
+ 			var humedad = [];
+ 			requestData();
+			function requestData()
+			{
+				var request = $.get('/data');
+				
+				var tm = request.done(function (result){
+					temperatura.push(result[0]);
+					humedad.push(result[1]);
+					
+					document.getElementById("t").innerHTML = result[0];
+					document.getElementById("h").innerHTML = result[1];
+					
+					var trace = {
+						x:temperatura,
+						type:"histogram"
+					};
+					var datos = [trace]
+					Plotly.newPlot('temp', datos);
+					
+					var trace2 = {
+						x:humedad,
+						type:"histogram",
+						marker:{
+							color: 'pink'
+						}
+					};
+					var datos2 = [trace2]
+					Plotly.newPlot('hum', datos2);
+					
+					
+					setTimeout(requestData,2000);
+				});
+			}
+		</script>
+	
+	</body>
+</html>
